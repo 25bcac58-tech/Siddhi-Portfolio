@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siddhi | Creative Developer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="identity">
+                <h1>Siddhi<span class="blink">_</span></h1>
+                <p class="subtitle">Creative Developer</p>
+            </div>
+            <nav>
+                <a href="#about">> /about_me</a>
+                <a href="#projects">> /projects</a>
+                <a href="#guestbook">> /guestbook_log</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section id="about">
+                <h2>> Vibe_Check</h2>
+                <p>Hey there, welcome to my digital space! I specialize in building flashy, high-energy web experiences that leave a lasting impression. Cool code, good vibes, and flawless execution.</p>
+            </section>
+
+            <section id="guestbook">
+                <h2>> Drop_A_Message</h2>
+                <form id="logForm">
+                    <input type="text" id="codename" placeholder="Your Name/Codename..." required>
+                    <textarea id="message" placeholder="What's good?..." required></textarea>
+                    <button type="submit">SEND_VIBES</button>
+                </form>
+
+                <h2>> Recent_Shoutouts</h2>
+                <div id="logsContainer">
+                    </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById('logForm');
+        const logsContainer = document.getElementById('logsContainer');
+
+        // Fetch logs on load
+        async function fetchLogs() {
+            const res = await fetch('/api/logs');
+            const logs = await res.json();
+            logsContainer.innerHTML = '';
+            logs.forEach(log => {
+                const logDiv = document.createElement('div');
+                logDiv.className = 'log-entry';
+                logDiv.innerHTML = `<strong>${log.codename}</strong>: ${log.message}`;
+                logsContainer.appendChild(logDiv);
+            });
+        }
+
+        // Submit new log
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const codename = document.getElementById('codename').value;
+            const message = document.getElementById('message').value;
+
+            await fetch('/api/logs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codename, message })
+            });
+
+            form.reset();
+            fetchLogs(); // Refresh the list
+        });
+
+        fetchLogs(); // Initial load
+    </script>
+</body>
+</html>
